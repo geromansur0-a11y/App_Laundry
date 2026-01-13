@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aplikasi Laundry - Mobile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d6efd"/>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid d-flex align-items-center">
+      <span class="navbar-brand mb-0 h1">Laundry</span>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <button id="btn-reports-toggle" class="btn btn-outline-light btn-sm">Laporan</button>
+        <button id="btn-notif" class="btn btn-outline-light btn-sm position-relative">
+          🔔
+          <span id="notif-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-3">
+    <div class="row g-3">
+      <div class="col-12">
+        <div class="card p-2">
+          <form id="form-add-customer" class="row g-2 align-items-end">
+            <div class="col-5">
+              <label class="form-label">Nama</label>
+              <input type="text" id="cust-name" class="form-control" placeholder="Nama pelanggan" required>
+            </div>
+            <div class="col-4">
+              <label class="form-label">Telepon</label>
+              <input type="text" id="cust-phone" class="form-control" placeholder="0812...">
+            </div>
+            <div class="col-3 d-grid">
+              <button class="btn btn-success" type="submit">Tambah Pelanggan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card p-2">
+          <h6>Tambah Order</h6>
+          <form id="form-add-order" class="row g-2">
+            <div class="col-12">
+              <select id="select-customer" class="form-select" required>
+                <option value="">Pilih pelanggan...</option>
+              </select>
+            </div>
+            <div class="col-5">
+              <label class="form-label">Berat (kg)</label>
+              <input type="number" step="0.1" id="order-weight" class="form-control" required>
+            </div>
+            <div class="col-4">
+              <label class="form-label">Harga /kg</label>
+              <input type="number" id="order-price" class="form-control" required>
+            </div>
+            <div class="col-3 d-grid">
+              <button class="btn btn-primary" type="submit">Buat Order</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card p-2">
+          <div class="d-flex mb-2 gap-2">
+            <input id="search-q" class="form-control" placeholder="Cari nama / telepon / id">
+            <select id="filter-status" class="form-select" style="max-width:160px;">
+              <option value="">Semua status</option>
+              <option value="received">Diterima</option>
+              <option value="processing">Diproses</option>
+              <option value="done">Selesai</option>
+              <option value="picked">Diambil</option>
+            </select>
+            <button id="btn-search" class="btn btn-outline-primary">Cari</button>
+          </div>
+
+          <div id="orders-list"></div>
+        </div>
+      </div>
+
+      <!-- Notifications dropdown -->
+      <div id="notif-panel" class="col-12" style="display:none;">
+        <div class="card p-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Notifikasi</strong>
+            <div>
+              <button id="btn-mark-all-read" class="btn btn-sm btn-outline-secondary">Tandai semua dibaca</button>
+              <button id="btn-close-notif" class="btn btn-sm btn-outline-danger">Tutup</button>
+            </div>
+          </div>
+          <div id="notif-list" class="list-group"></div>
+        </div>
+      </div>
+
+      <!-- Reports panel -->
+      <div id="reports-panel" class="col-12" style="display:none;">
+        <div class="card p-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Laporan</strong>
+            <button id="btn-close-reports" class="btn btn-sm btn-outline-danger">Tutup</button>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Laporan Harian</label>
+            <div class="d-flex gap-2">
+              <input type="date" id="report-date" class="form-control" />
+              <button id="btn-show-daily" class="btn btn-primary">Tampilkan</button>
+              <button id="btn-export-daily" class="btn btn-outline-secondary">Export CSV</button>
+              <button id="btn-export-pdf-daily" class="btn btn-outline-secondary">Export PDF</button>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Laporan Periode</label>
+            <div class="d-flex gap-2">
+              <input type="date" id="report-start" class="form-control" />
+              <input type="date" id="report-end" class="form-control" />
+              <button id="btn-show-period" class="btn btn-primary">Tampilkan</button>
+              <button id="btn-export-period" class="btn btn-outline-secondary">Export CSV</button>
+              <button id="btn-export-pdf-period" class="btn btn-outline-secondary">Export PDF</button>
+            </div>
+          </div>
+
+          <div id="report-result" class="mt-2 small text-muted"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- jsPDF + autotable (UMD builds) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <script src="/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(()=>{/* ignore */});
+    }
+  </script>
+</body>
+                                                 </html>
