@@ -1,0 +1,15 @@
+{
+  "name": "SALUD",
+  "short_name": "Laundry",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "icons": [
+    {
+      "src": "https://sora.chatgpt.com/g/gen_01ketj14gsef6rhhrbkjgyy9pw",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
