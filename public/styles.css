@@ -1,2 +1,13 @@
 body { font-size: 0.95rem; }
 .card { border-radius: 8px; }
+
+/* notif badge small adjustments */
+#notif-count {
+  font-size: 0.65rem;
+  padding: 0.25rem 0.35rem;
+}
+
+/* small responsive tweaks */
+@media (max-width: 420px) {
+  .navbar-brand { font-size: 1rem; }
+}
